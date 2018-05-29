@@ -1,0 +1,17 @@
+## Packages
+from pygeocoder import Geocoder ##If you had not installed pygeocoder install it using pip install
+import pandas as pd
+
+df = pd.read_csv("dataset.csv", sep=',', encoding='latin') ##the encoding is for datasets in spanish
+address = df.address
+resultado = []
+for a in address:
+    try:
+        result = (Geocoder.geocode(a))
+        print(result[0].coordinates)
+        resultado.append(result[0].coordinates)
+        print (a)
+    except:
+        resultado.append('error')
+df["result"] = resultado
+df.to_csv("dataset.csv")
