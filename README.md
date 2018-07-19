@@ -9,4 +9,4 @@ The code I post here has two special characteristics:
 With this version it is possible to only geocode a maximum of 2500 registers since it is the free limit that Google Maps API permits.
 If you want to goecode a larger list of addresses check the following link: https://gist.github.com/shanealynn/033c8a3cacdba8ce03cbe116225ced31 
 
-Thanks to Daniela Moctezuma for her active help with beginners like me. Check out her profile here: https://github.com/dmocteo
+This code was developped with the insightful help of professor Daniela Moctezuma (Centro Geo). Check out her profile here: https://github.com/dmocteo
