@@ -1,5 +1,5 @@
 # Geocoding
-Python code to geocode lists of addresses in Python.  
+Python code to geocode lists of addresses in Python within a pandas Data Frame.  
 
 The code I post here has two special characteristics:
 1. It will make the geocoding automatically.
