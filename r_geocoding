@@ -1,0 +1,42 @@
+#Geocode ports of entry to the US----
+
+#Generate a list of URLs with addresess of the entry ports from the CBP website----
+urls<-lapply(str_split(paste("https://www.cbp.gov/contact/ports/",
+          c("ca","az","nm","tx"),
+          sep="",
+          collapse = " "),
+    pattern = " ",
+    n=4)[[1]],
+    xml2::read_html)
+
+#Geocode addresses----
+#Ask for a list to rbind into a single dataset
+ports_entry<-do.call(rbind, 
+
+        #Apply a function of all the following steps to the list of URLs
+        lapply(urls, function(x){
+          
+          #Extract each table in the URLs and convert it into a tibble
+          rvest::html_table(x,
+                            fill=T)[[1]] %>% 
+            as_tibble() %>% 
+            
+            #Generate a new variable eliminating \n replacing with blank spaces
+            mutate(location=str_replace_all(`Location Address`, "\\n", " "),
+                   
+            #Replace wrong address in CBP's database
+      location=if_else(location=="Lincoln/Juarez Bridge, Administrative Bldg. #2 Laredo, TX 78040", "201-299 San Dario Ave, Laredo, TX 78040, Estados Unidos",
+                if_else(location=="Highway 95 & International Border San Luis, AZ 85349", "431 Main St, San Luis, AZ 85349, Estados Unidos",
+                if_else(location=="Highway 85 & Border Lukeville, AZ 85341", "190 AZ-85, Lukeville, AZ 85341, Estados Unidos",
+                if_else(location=="2350 N. Sam Houston Pkwy E. #900 Houston, TX 77032-3100", "2800 N Terminal Rd, Houston, TX 77032, Estados Unidos",location))))) %>%
+            
+    #Geoocode with ggmap and data science toolkit the list of addresses in the "location" variable
+            ggmap::mutate_geocode(., 
+                        location, 
+                        source="dsk", 
+                        output="latlon") %>% 
+            
+            #Convert lat long to geometry
+            st_as_sf(coords=c("lon", "lat"),
+                     crs=4326) 
+          })) 
